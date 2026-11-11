@@ -1116,7 +1116,6 @@ svg {
 
 </svg>
 
-</body>
 <!-- MÚSICA DE FONDO -->
 <audio id="backgroundMusic" loop>
     <source src="MRF.mp3" type="audio/mpeg">
@@ -1125,10 +1124,10 @@ svg {
 <script>
     const music = document.getElementById("backgroundMusic");
 
-    // Iniciar música al interactuar con la página
     document.addEventListener("click", function startMusic() {
         music.play();
-        document.removeEventListener("click", startMusic);
     }, { once: true });
 </script>
+
+</body>
 </html>
