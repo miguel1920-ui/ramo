@@ -1124,9 +1124,11 @@ svg {
 <script>
     const music = document.getElementById("backgroundMusic");
 
-    document.addEventListener("click", function startMusic() {
-        music.play();
-    }, { once: true });
+    window.addEventListener("load", function() {
+        music.play().catch(function(error) {
+            console.log("El navegador bloqueó la reproducción automática");
+        });
+    });
 </script>
 
 </body>
