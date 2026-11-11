@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ramo coreano de lirios rosados</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    background: #000;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+svg {
+    width: min(96vw, 760px);
+    max-height: 98vh;
+    overflow: visible;
+}
+
+/* =========================================
+   MOVIMIENTO NATURAL DE LAS FLORES
+========================================= */
+
+.flower {
+    transform-box: fill-box;
+    transform-origin: 50% 85%;
+    animation: flowerBreeze var(--duration, 6s) ease-in-out infinite;
+    animation-delay: var(--flower-delay, 0s);
+}
+
+@keyframes flowerBreeze {
+    0%, 100% {
+        transform: rotate(-0.8deg) translateY(0);
+    }
+
+    25% {
+        transform: rotate(0.5deg) translateY(-1.5px);
+    }
+
+    50% {
+        transform: rotate(1.3deg) translateY(-2px);
+    }
+
+    75% {
+        transform: rotate(0deg) translateY(-0.5px);
+    }
+}
+
+/* MOVIMIENTO DE LAS HOJAS */
+
+.leaves {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: leafBreeze 9s ease-in-out infinite;
+}
+
+@keyframes leafBreeze {
+    0%, 100% { transform: rotate(-0.2deg); }
+    50% { transform: rotate(0.6deg); }
+}
+
+/* MOVIMIENTO DEL MOÑO */
+
+.ribbon {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: ribbonMovement 8s ease-in-out infinite;
+}
+
+@keyframes ribbonMovement {
+    0%, 100% { transform: rotate(-0.15deg); }
+    50% { transform: rotate(0.35deg); }
+}
+
+/* =========================================
+   ESTRELLAS DEL FONDO
+========================================= */
+
+.star {
+    fill: #ffffff;
+    opacity: 0.45;
+    animation: twinkle 3s ease-in-out infinite;
+    animation-delay: var(--star-delay, 0s);
+}
+
+.star.bright {
+    opacity: 0.8;
+    filter: url(#starGlow);
+    animation-duration: 4s;
+}
+
+.star.small {
+    opacity: 0.3;
+    animation-duration: 5s;
+}
+
+@keyframes twinkle {
+    0%, 100% {
+        opacity: 0.2;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* =========================================
+   ANIMACIÓN DE CREACIÓN DEL RAMO
+========================================= */
+
+.draw-reveal {
+    opacity: 0;
+    clip-path: inset(100% 0 0 0);
+    animation: drawAppear 1.5s ease-out forwards;
+    animation-delay: var(--delay, 0s);
+}
+
+@keyframes drawAppear {
+    0% {
+        opacity: 0;
+        clip-path: inset(100% 0 0 0);
+    }
+
+    100% {
+        opacity: 1;
+        clip-path: inset(0 0 0 0);
+    }
+}
+
+/* DIBUJO PROGRESIVO DE LOS TALLOS */
+
+.stem-lines path {
+    stroke-dasharray: 1200;
+    stroke-dashoffset: 1200;
+    animation: drawStem 2.2s ease-out forwards;
+    animation-delay: var(--delay, 0s);
+}
+
+@keyframes drawStem {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+/* MOVIMIENTO REDUCIDO */
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation: none !important;
+    }
+
+    .draw-reveal {
+        opacity: 1;
+        clip-path: none;
+    }
+
+    .stem-lines path {
+        stroke-dashoffset: 0;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<svg viewBox="0 0 760 850"
+     xmlns="http://www.w3.org/2000/svg">
+
+<defs>
+
+    <!-- SOMBRAS -->
+
+    <filter id="flowerShadow" x="-60%" y="-60%" width="220%" height="220%">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="5" result="blur"/>
+        <feOffset in="blur" dx="3" dy="6" result="offset"/>
+        <feComponentTransfer in="offset" result="shadow">
+            <feFuncA type="linear" slope=".42"/>
+        </feComponentTransfer>
+        <feMerge>
+            <feMergeNode in="shadow"/>
+            <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+    </filter>
+
+    <filter id="paperShadow" x="-30%" y="-30%" width="160%" height="170%">
+        <feGaussianBlur stdDeviation="9"/>
+    </filter>
+
+    <!-- BRILLO DE LAS ESTRELLAS -->
+
+    <filter id="starGlow" x="-300%" y="-300%" width="700%" height="700%">
+        <feGaussianBlur stdDeviation="2.5" result="glow"/>
+        <feMerge>
+            <feMergeNode in="glow"/>
+            <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+    </filter>
+
+    <!-- PÉTALOS -->
+
+    <linearGradient id="pinkPetal" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#fffdf7"/>
+        <stop offset="15%" stop-color="#ffe8e9"/>
+        <stop offset="35%" stop-color="#f9b9c8"/>
+        <stop offset="55%" stop-color="#f17d9e"/>
+        <stop offset="78%" stop-color="#d94b7a"/>
+        <stop offset="100%" stop-color="#852044"/>
+    </linearGradient>
+
+    <linearGradient id="petalLight" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#ffffff" stop-opacity=".65"/>
+        <stop offset="45%" stop-color="#fff0f1" stop-opacity=".05"/>
+        <stop offset="100%" stop-color="#a92556" stop-opacity=".35"/>
+    </linearGradient>
+
+    <!-- HOJAS -->
+
+    <linearGradient id="leafGreen" x1="0" y1="0" x2="1" y2=".2">
+        <stop offset="0%" stop-color="#102e20"/>
+        <stop offset="25%" stop-color="#28613a"/>
+        <stop offset="48%" stop-color="#85ae61"/>
+        <stop offset="65%" stop-color="#477e43"/>
+        <stop offset="100%" stop-color="#12351f"/>
+    </linearGradient>
+
+    <linearGradient id="leafVein" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#527e42"/>
+        <stop offset="50%" stop-color="#d2e49a"/>
+        <stop offset="100%" stop-color="#416c38"/>
+    </linearGradient>
+
+    <!-- TALLOS -->
+
+    <linearGradient id="stemColor" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#15371f"/>
+        <stop offset="35%" stop-color="#477b3c"/>
+        <stop offset="55%" stop-color="#86a958"/>
+        <stop offset="75%" stop-color="#396a34"/>
+        <stop offset="100%" stop-color="#102c1a"/>
+    </linearGradient>
+
+    <!-- ESTAMBRES -->
+
+    <linearGradient id="stamen" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#a76a25"/>
+        <stop offset="45%" stop-color="#fff0b0"/>
+        <stop offset="100%" stop-color="#c68b35"/>
+    </linearGradient>
+
+    <!-- PAPEL -->
+
+    <linearGradient id="paperCream" x1="0" y1="0" x2="1" y2=".2">
+        <stop offset="0%" stop-color="#a69b8c"/>
+        <stop offset="18%" stop-color="#e6daca"/>
+        <stop offset="43%" stop-color="#fff8ec"/>
+        <stop offset="65%" stop-color="#eee3d5"/>
+        <stop offset="100%" stop-color="#a99d8e"/>
+    </linearGradient>
+
+    <linearGradient id="paperNude" x1="0" y1="0" x2="1" y2=".2">
+        <stop offset="0%" stop-color="#a98d7d"/>
+        <stop offset="25%" stop-color="#e7cbbb"/>
+        <stop offset="50%" stop-color="#f7e6d8"/>
+        <stop offset="75%" stop-color="#dfc0af"/>
+        <stop offset="100%" stop-color="#9e8173"/>
+    </linearGradient>
+
+    <linearGradient id="paperLight" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#c9bbaa"/>
+        <stop offset="35%" stop-color="#fffaf0"/>
+        <stop offset="70%" stop-color="#f0e5d8"/>
+        <stop offset="100%" stop-color="#c2b3a3"/>
+    </linearGradient>
+
+    <linearGradient id="paperShade" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#81766c"/>
+        <stop offset="50%" stop-color="#d5c7b7"/>
+        <stop offset="100%" stop-color="#8e8175"/>
+    </linearGradient>
+
+    <!-- LISTÓN ROSA -->
+
+    <linearGradient id="ribbonColor" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#ffd8e1"/>
+        <stop offset="25%" stop-color="#ed9eb4"/>
+        <stop offset="55%" stop-color="#d66a91"/>
+        <stop offset="80%" stop-color="#a83d69"/>
+        <stop offset="100%" stop-color="#792447"/>
+    </linearGradient>
+
+    <!-- PÉTALO INDIVIDUAL -->
+
+    <g id="petal">
+
+        <path d="
+            M0 5
+            C-15 -15 -49 -53 -43 -85
+            C-38 -112 -12 -132 0 -140
+            C14 -128 42 -105 45 -79
+            C49 -48 15 -12 0 5Z"
+            fill="#7f2146"
+            opacity=".45"
+            transform="translate(2 4)"/>
+
+        <path d="
+            M0 5
+            C-15 -15 -49 -53 -43 -85
+            C-38 -112 -12 -132 0 -140
+            C14 -128 42 -105 45 -79
+            C49 -48 15 -12 0 5Z"
+            fill="url(#pinkPetal)"
+            stroke="#f7c0cd"
+            stroke-width="1.8"/>
+
+        <path d="
+            M0 -3
+            C-19 -42 -30 -80 -26 -108
+            C-15 -119 -6 -132 0 -140
+            C-2 -91 8 -39 0 -3Z"
+            fill="url(#petalLight)"
+            opacity=".8"/>
+
+        <path d="
+            M0 0
+            C-4 -43 -12 -91 0 -132
+            C8 -90 5 -42 0 0Z"
+            fill="none"
+            stroke="#fff6f1"
+            stroke-opacity=".6"
+            stroke-width="2"/>
+
+        <path d="
+            M0 -5
+            C-16 -42 -26 -76 -31 -99
+            M0 -5
+            C16 -42 27 -76 33 -98"
+            fill="none"
+            stroke="#b63868"
+            stroke-opacity=".42"
+            stroke-width="1.7"/>
+
+        <path d="M-35 -78 Q-37 -111 -12 -129"
+              fill="none"
+              stroke="#fffaf5"
+              stroke-opacity=".55"
+              stroke-width="3"
+              stroke-linecap="round"/>
+    </g>
+
+    <!-- LIRIO COMPLETO -->
+
+    <g id="lily" filter="url(#flowerShadow)">
+
+        <ellipse cx="0" cy="5" rx="73" ry="42"
+                 fill="#35102b" opacity=".3"/>
+
+        <use href="#petal" transform="rotate(-48) scale(.91)"/>
+        <use href="#petal" transform="rotate(48) scale(.91)"/>
+        <use href="#petal" transform="rotate(180) scale(.88)"/>
+
+        <use href="#petal" transform="rotate(-108) scale(1.02)"/>
+        <use href="#petal" transform="rotate(108) scale(1.02)"/>
+        <use href="#petal" transform="rotate(0) scale(1.08)"/>
+
+        <g fill="#9f1d50" opacity=".8">
+            <ellipse cx="-13" cy="-48" rx="2.5" ry="4"/>
+            <ellipse cx="15" cy="-52" rx="2.4" ry="4"/>
+            <ellipse cx="-22" cy="-66" rx="2" ry="3"/>
+            <ellipse cx="24" cy="-69" rx="2.2" ry="3.5"/>
+            <ellipse cx="-12" cy="-81" rx="2" ry="3"/>
+            <ellipse cx="13" cy="-88" rx="2" ry="3"/>
+            <ellipse cx="-30" cy="-91" rx="2" ry="3"/>
+            <ellipse cx="31" cy="-94" rx="2" ry="3"/>
+            <ellipse cx="-18" cy="-104" rx="1.8" ry="2.5"/>
+            <ellipse cx="20" cy="-108" rx="1.8" ry="2.5"/>
+        </g>
+
+        <ellipse cx="0" cy="0" rx="12" ry="9" fill="#e3ad51"/>
+        <ellipse cx="-2" cy="-3" rx="6" ry="4" fill="#ffe2a0" opacity=".8"/>
+
+        <g fill="none" stroke="url(#stamen)"
+           stroke-width="3.2" stroke-linecap="round">
+            <path d="M0 0 Q-24 -28 -29 -58"/>
+            <path d="M0 0 Q-13 -35 -13 -66"/>
+            <path d="M0 0 Q0 -40 0 -72"/>
+            <path d="M0 0 Q15 -35 15 -66"/>
+            <path d="M0 0 Q26 -28 29 -58"/>
+        </g>
+
+        <g fill="#a94c29" stroke="#e7a35a" stroke-width="1">
+            <ellipse cx="-29" cy="-59" rx="4.5" ry="7"/>
+            <ellipse cx="-13" cy="-67" rx="4.5" ry="7"/>
+            <ellipse cx="0" cy="-73" rx="4.5" ry="7"/>
+            <ellipse cx="15" cy="-67" rx="4.5" ry="7"/>
+            <ellipse cx="29" cy="-59" rx="4.5" ry="7"/>
+        </g>
+
+        <g fill="#ffd99a">
+            <circle cx="-30" cy="-62" r="1.5"/>
+            <circle cx="-14" cy="-70" r="1.5"/>
+            <circle cx="-1" cy="-76" r="1.5"/>
+            <circle cx="14" cy="-70" r="1.5"/>
+            <circle cx="28" cy="-62" r="1.5"/>
+        </g>
+
+        <path d="M0 2 Q-2 -35 2 -84"
+              fill="none" stroke="#d9b76b" stroke-width="3.5"/>
+
+        <path d="M-5 -85 Q2 -96 9 -85 Q5 -76 0 -78Z"
+              fill="#f2d38a" stroke="#b58b43" stroke-width="1"/>
+    </g>
+
+    <!-- HOJA -->
+
+    <g id="leaf">
+
+        <path d="
+            M0 0
+            C-35 -45 -85 -110 -8 -190
+            C10 -135 37 -64 0 0Z"
+            fill="#102b1b"
+            transform="translate(3 4)"/>
+
+        <path d="
+            M0 0
+            C-35 -45 -85 -110 -8 -190
+            C10 -135 37 -64 0 0Z"
+            fill="url(#leafGreen)"
+            stroke="#73985a"
+            stroke-width="1.5"/>
+
+        <path d="
+            M0 -5
+            C-25 -65 -45 -120 -8 -183
+            C-13 -119 -5 -53 0 -5Z"
+            fill="#a7ca78"
+            opacity=".18"/>
+
+        <path d="M0 0 Q-10 -100 -8 -185"
+              fill="none"
+              stroke="url(#leafVein)"
+              stroke-width="2.4"/>
+
+        <g fill="none" stroke="#c0d58b"
+           stroke-opacity=".4" stroke-width="1.3">
+            <path d="M-4 -45 Q-34 -95 -53 -111"/>
+            <path d="M-6 -65 Q-38 -91 -48 -94"/>
+            <path d="M-5 -75 Q19 -105 22 -127"/>
+            <path d="M-7 -105 Q12 -124 16 -143"/>
+        </g>
+    </g>
+
+</defs>
+
+<!-- =========================================
+     FONDO NOCTURNO
+========================================= -->
+
+<rect width="760" height="850" fill="#000"/>
+
+<!-- ESTRELLAS PEQUEÑAS -->
+
+<g id="stars">
+
+    <circle class="star small" style="--star-delay:-1s" cx="45" cy="75" r="1.3"/>
+    <circle class="star" style="--star-delay:-2s" cx="115" cy="145" r="1.8"/>
+    <circle class="star bright" style="--star-delay:-3s" cx="205" cy="75" r="2.1"/>
+    <circle class="star small" style="--star-delay:-2.5s" cx="290" cy="125" r="1.2"/>
+    <circle class="star" style="--star-delay:-1.5s" cx="355" cy="55" r="1.7"/>
+    <circle class="star bright" style="--star-delay:-3.5s" cx="450" cy="105" r="2"/>
+    <circle class="star small" style="--star-delay:-4s" cx="530" cy="55" r="1.2"/>
+    <circle class="star" style="--star-delay:-2s" cx="615" cy="125" r="1.6"/>
+    <circle class="star bright" style="--star-delay:-1s" cx="710" cy="75" r="2.2"/>
+
+    <circle class="star" style="--star-delay:-4s" cx="75" cy="240" r="1.6"/>
+    <circle class="star small" style="--star-delay:-2s" cx="155" cy="295" r="1.1"/>
+    <circle class="star bright" style="--star-delay:-3s" cx="265" cy="220" r="2"/>
+    <circle class="star small" style="--star-delay:-1s" cx="330" cy="185" r="1.2"/>
+    <circle class="star" style="--star-delay:-3.5s" cx="425" cy="250" r="1.6"/>
+    <circle class="star bright" style="--star-delay:-2.5s" cx="535" cy="205" r="2.2"/>
+    <circle class="star small" style="--star-delay:-4.5s" cx="635" cy="270" r="1.2"/>
+    <circle class="star" style="--star-delay:-1.5s" cx="720" cy="225" r="1.7"/>
+
+    <circle class="star bright" style="--star-delay:-2s" cx="35" cy="370" r="2"/>
+    <circle class="star small" style="--star-delay:-3s" cx="100" cy="425" r="1.2"/>
+    <circle class="star" style="--star-delay:-4s" cx="680" cy="380" r="1.6"/>
+    <circle class="star bright" style="--star-delay:-1s" cx="735" cy="460" r="2.1"/>
+
+    <circle class="star small" style="--star-delay:-2.5s" cx="55" cy="555" r="1.2"/>
+    <circle class="star" style="--star-delay:-3.5s" cx="105" cy="640" r="1.7"/>
+    <circle class="star bright" style="--star-delay:-1.5s" cx="695" cy="580" r="2"/>
+    <circle class="star small" style="--star-delay:-4s" cx="730" cy="675" r="1.1"/>
+
+    <circle class="star" style="--star-delay:-2s" cx="35" cy="750" r="1.8"/>
+    <circle class="star bright" style="--star-delay:-3s" cx="115" cy="790" r="2"/>
+    <circle class="star small" style="--star-delay:-1s" cx="205" cy="825" r="1.2"/>
+    <circle class="star" style="--star-delay:-4s" cx="555" cy="810" r="1.6"/>
+    <circle class="star bright" style="--star-delay:-2.5s" cx="655" cy="780" r="2.1"/>
+    <circle class="star small" style="--star-delay:-3.5s" cx="735" cy="820" r="1.2"/>
+
+    <!-- ESTRELLAS MÁS SUTILES -->
+
+    <g fill="#fff" opacity=".45">
+        <circle cx="85" cy="110" r=".8"/>
+        <circle cx="180" cy="185" r=".7"/>
+        <circle cx="315" cy="75" r=".8"/>
+        <circle cx="390" cy="145" r=".7"/>
+        <circle cx="580" cy="165" r=".8"/>
+        <circle cx="680" cy="165" r=".7"/>
+        <circle cx="25" cy="300" r=".8"/>
+        <circle cx="745" cy="315" r=".8"/>
+        <circle cx="65" cy="475" r=".7"/>
+        <circle cx="700" cy="510" r=".8"/>
+        <circle cx="45" cy="680" r=".8"/>
+        <circle cx="715" cy="740" r=".7"/>
+    </g>
+
+</g>
+
+
+<!-- =========================================
+     ENVOLTURA TRASERA CERRADA
+========================================= -->
+
+<g class="draw-reveal" style="--delay: 0.2s">
+
+    <!-- Cuerpo completo del papel -->
+    <path d="
+        M380 405
+        Q300 405 205 425
+        Q145 440 115 490
+        Q145 545 205 610
+        Q250 690 295 790
+        Q325 835 380 850
+        Q435 835 465 790
+        Q510 690 555 610
+        Q615 545 645 490
+        Q615 440 555 425
+        Q460 405 380 405Z"
+        fill="url(#paperNude)"
+        stroke="#bda99a"
+        stroke-width="2"/>
+
+    <!-- Lateral izquierdo -->
+    <path d="
+        M380 405
+        Q300 405 205 425
+        Q145 440 115 490
+        Q145 545 205 610
+        Q250 690 295 790
+        Q250 745 215 665
+        Q170 585 155 510
+        Q180 460 260 445
+        Q325 430 380 435Z"
+        fill="url(#paperLight)"
+        stroke="#e5d5c5"
+        stroke-width="2"/>
+
+    <!-- Lateral derecho -->
+    <path d="
+        M380 405
+        Q460 405 555 425
+        Q615 440 645 490
+        Q615 545 555 610
+        Q510 690 465 790
+        Q510 745 545 665
+        Q590 585 605 510
+        Q580 460 500 445
+        Q435 430 380 435Z"
+        fill="url(#paperShade)"
+        stroke="#c5b3a3"
+        stroke-width="2"/>
+
+    <!-- Pliegues interiores -->
+    <path d="
+        M155 510
+        Q230 535 285 585
+        Q320 640 350 790
+        Q290 710 255 640
+        Q195 570 155 510Z"
+        fill="url(#paperCream)"
+        stroke="#e9ddce"
+        stroke-width="2"/>
+
+    <path d="
+        M605 510
+        Q530 535 475 585
+        Q440 640 410 790
+        Q470 710 505 640
+        Q565 570 605 510Z"
+        fill="url(#paperNude)"
+        stroke="#e5d2c1"
+        stroke-width="2"/>
+
+    <!-- Pliegue central inferior -->
+    <path d="
+        M255 625
+        Q315 650 380 700
+        Q445 650 505 625
+        Q465 750 380 835
+        Q295 750 255 625Z"
+        fill="url(#paperLight)"
+        stroke="#d9cabc"
+        stroke-width="2"/>
+
+    <path d="
+        M380 690
+        Q350 760 380 825
+        Q410 760 380 690Z"
+        fill="#fffaf0"
+        opacity=".55"/>
+
+    <!-- Líneas que simulan los pliegues -->
+    <g fill="none" stroke-linecap="round">
+
+        <path d="M115 490 Q180 530 245 590"
+              stroke="#fff9ed" stroke-width="5" opacity=".8"/>
+
+        <path d="M645 490 Q580 530 515 590"
+              stroke="#fff4e6" stroke-width="5" opacity=".7"/>
+
+        <path d="M155 510 Q220 640 295 790"
+              stroke="#fff9ef" stroke-width="3" opacity=".65"/>
+
+        <path d="M605 510 Q540 640 465 790"
+              stroke="#847668" stroke-width="3" opacity=".35"/>
+
+        <path d="M255 625 Q315 650 380 700"
+              stroke="#fff9ef" stroke-width="4" opacity=".7"/>
+
+        <path d="M505 625 Q445 650 380 700"
+              stroke="#9d8d7e" stroke-width="3" opacity=".3"/>
+
+        <path d="M295 790 Q380 850 465 790"
+              stroke="#fff4e7" stroke-width="4" opacity=".65"/>
+
+    </g>
+
+</g>
+
+<!-- =========================================
+     CIERRE INTERIOR DEL ENVOLTORIO
+========================================= -->
+
+<g class="draw-reveal" style="--delay: 0.8s">
+
+    <!-- Papel que cubre los espacios interiores -->
+    <path d="
+        M190 445
+        Q250 465 300 485
+        Q380 510 460 485
+        Q510 465 570 445
+        Q590 520 555 610
+        Q520 700 455 810
+        Q380 840 305 810
+        Q240 700 205 610
+        Q170 520 190 445Z"
+        fill="url(#paperNude)"
+        stroke="#c8b3a2"
+        stroke-width="2"/>
+
+    <!-- Pliegue interior izquierdo -->
+    <path d="
+        M190 445
+        Q250 465 300 485
+        Q270 550 275 625
+        Q285 730 340 815
+        Q260 745 215 620
+        Q185 530 190 445Z"
+        fill="url(#paperLight)"
+        opacity=".9"/>
+
+    <!-- Pliegue interior derecho -->
+    <path d="
+        M570 445
+        Q510 465 460 485
+        Q490 550 485 625
+        Q475 730 420 815
+        Q500 745 545 620
+        Q575 530 570 445Z"
+        fill="url(#paperShade)"
+        opacity=".85"/>
+
+    <!-- Pliegues centrales -->
+    <path d="
+        M300 485
+        Q340 520 380 545
+        Q420 520 460 485
+        Q430 570 380 625
+        Q330 570 300 485Z"
+        fill="url(#paperCream)"
+        opacity=".65"/>
+
+</g>
+
+<!-- =========================================
+     CUATRO TALLOS PRINCIPALES
+========================================= -->
+
+<g class="stem-lines" style="--delay: 1.3s"
+   fill="none" stroke-linecap="round">
+
+    <path d="M380 850 C365 680 300 520 235 370"
+          stroke="url(#stemColor)" stroke-width="12"/>
+
+    <path d="M380 850 C375 650 380 480 380 300"
+          stroke="url(#stemColor)" stroke-width="12"/>
+
+    <path d="M385 850 C405 680 470 520 525 370"
+          stroke="url(#stemColor)" stroke-width="12"/>
+
+    <path d="M390 850 C390 680 390 540 380 425"
+          stroke="url(#stemColor)" stroke-width="11"/>
+
+    <g stroke="#a2bd70" stroke-width="2" opacity=".45">
+        <path d="M376 800 C350 650 290 500 235 370"/>
+        <path d="M375 800 C375 630 380 470 380 300"/>
+        <path d="M390 800 C420 650 480 500 525 370"/>
+    </g>
+</g>
+
+<!-- =========================================
+     ENVOLTURA FRONTAL COMPLETA
+========================================= -->
+
+<g class="draw-reveal" style="--delay: 6.3s">
+
+<g id="wrapper" transform="translate(0 75)">
+
+    <!-- Sombra inferior -->
+    <path d="
+        M130 565
+        Q380 640 630 565
+        Q565 720 455 824
+        Q380 865 305 824
+        Q195 720 130 565Z"
+        fill="#5c4d42"
+        opacity=".55"
+        filter="url(#paperShadow)"/>
+
+    <!-- Papel principal -->
+    <path d="
+        M130 565
+        Q95 515 115 455
+        Q170 490 225 530
+        Q290 570 380 580
+        Q470 570 535 530
+        Q590 490 645 455
+        Q665 515 630 565
+        L465 815
+        Q380 865 295 815Z"
+        fill="url(#paperNude)"
+        stroke="#bda99a"
+        stroke-width="2"/>
+
+    <!-- Cierre lateral izquierdo -->
+    <path d="
+        M130 565
+        Q95 515 115 455
+        Q170 490 225 530
+        Q195 590 205 650
+        Q245 755 295 815
+        Q220 760 180 675
+        Q145 620 130 565Z"
+        fill="url(#paperLight)"
+        stroke="#e5d5c5"
+        stroke-width="2"/>
+
+    <!-- Cierre lateral derecho -->
+    <path d="
+        M630 565
+        Q665 515 645 455
+        Q590 490 535 530
+        Q565 590 555 650
+        Q515 755 465 815
+        Q540 760 580 675
+        Q615 620 630 565Z"
+        fill="url(#paperShade)"
+        stroke="#c5b3a3"
+        stroke-width="2"/>
+
+    <!-- Pliegue izquierdo -->
+    <path d="
+        M170 555
+        Q205 505 250 525
+        Q305 565 345 610
+        Q315 685 285 790
+        Q225 725 195 650
+        Q175 605 170 555Z"
+        fill="url(#paperCream)"
+        stroke="#e9ddce"
+        stroke-width="2"/>
+
+    <path d="M190 555 Q230 520 250 535 Q300 580 330 625"
+          fill="none"
+          stroke="#fffaf1"
+          stroke-width="5"
+          opacity=".7"/>
+
+    <!-- Pliegue derecho -->
+    <path d="
+        M590 555
+        Q555 505 510 525
+        Q455 565 415 610
+        Q445 685 475 790
+        Q535 725 565 650
+        Q585 605 590 555Z"
+        fill="url(#paperNude)"
+        stroke="#e5d2c1"
+        stroke-width="2"/>
+
+    <path d="M570 555 Q530 520 510 535 Q460 580 430 625"
+          fill="none"
+          stroke="#fff8ec"
+          stroke-width="5"
+          opacity=".6"/>
+
+    <!-- Pliegues centrales -->
+    <path d="
+        M225 565
+        Q275 525 315 565
+        Q345 610 380 650
+        Q415 610 445 565
+        Q485 525 535 565
+        Q510 680 465 750
+        Q425 815 380 840
+        Q335 815 295 750
+        Q250 680 225 565Z"
+        fill="url(#paperLight)"
+        stroke="#d9cabc"
+        stroke-width="2"/>
+
+    <path d="
+        M225 565
+        Q275 525 315 565
+        Q345 615 380 665
+        Q340 710 295 750
+        Q250 680 225 565Z"
+        fill="#e7d7c7"
+        stroke="#f8eee2"
+        stroke-width="2"/>
+
+    <path d="
+        M535 565
+        Q485 525 445 565
+        Q415 615 380 665
+        Q420 710 465 750
+        Q510 680 535 565Z"
+        fill="#d5c3b3"
+        stroke="#f6eadd"
+        stroke-width="2"/>
+
+    <!-- Punta central que cierra la envoltura -->
+    <path d="
+        M295 650
+        Q340 675 380 710
+        Q420 675 465 650
+        Q435 765 380 840
+        Q325 765 295 650Z"
+        fill="url(#paperCream)"
+        stroke="#e6d6c6"
+        stroke-width="2"/>
+
+    <path d="
+        M380 680
+        Q350 755 380 825
+        Q410 755 380 680Z"
+        fill="#fffaf0"
+        opacity=".55"/>
+
+    <!-- Líneas de acabado -->
+    <g fill="none" stroke-linecap="round">
+
+        <path d="M130 565 Q120 520 115 455"
+              stroke="#fff6e9" stroke-width="4" opacity=".7"/>
+
+        <path d="M630 565 Q640 520 645 455"
+              stroke="#f8e9d9" stroke-width="4" opacity=".55"/>
+
+        <path d="M170 555 Q205 520 250 525"
+              stroke="#fff8ed" stroke-width="4" opacity=".75"/>
+
+        <path d="M590 555 Q555 520 510 525"
+              stroke="#fff5e9" stroke-width="4" opacity=".55"/>
+
+        <path d="M225 565 Q275 525 315 565"
+              stroke="#fffdf5" stroke-width="5" opacity=".85"/>
+
+        <path d="M535 565 Q485 525 445 565"
+              stroke="#fff8ec" stroke-width="5" opacity=".7"/>
+
+        <path d="M295 650 Q340 675 380 710"
+              stroke="#fff9ef" stroke-width="4" opacity=".65"/>
+
+        <path d="M465 650 Q420 675 380 710"
+              stroke="#9d8d7e" stroke-width="3" opacity=".3"/>
+
+        <path d="M295 815 Q380 865 465 815"
+              stroke="#fff4e7" stroke-width="4" opacity=".65"/>
+
+    </g>
+
+    <!-- Pliegues longitudinales -->
+    <g fill="none"
+       stroke="#a99583"
+       stroke-width="2"
+       opacity=".38">
+
+        <path d="M175 590 Q225 700 295 790"/>
+        <path d="M200 575 Q250 690 320 810"/>
+        <path d="M585 590 Q535 700 465 790"/>
+        <path d="M560 575 Q510 690 440 810"/>
+        <path d="M335 625 Q355 725 350 815"/>
+        <path d="M425 625 Q405 725 410 815"/>
+
+    </g>
+
+    <!-- Unión inferior del papel -->
+    <path d="
+        M295 790
+        Q340 825 380 830
+        Q420 825 465 790
+        L455 840
+        Q380 875 305 840Z"
+        fill="url(#paperShade)"
+        stroke="#e3d4c5"
+        stroke-width="2"/>
+
+    <path d="M310 825 Q380 855 450 825"
+          fill="none"
+          stroke="#fff4e7"
+          stroke-width="4"
+          opacity=".65"/>
+
+</g>
+</g>
+
+<!-- =========================================
+     HOJAS
+========================================= -->
+
+<g class="draw-reveal" style="--delay: 2.7s">
+
+<g class="leaves">
+    <use href="#leaf" transform="translate(345 555) rotate(-72) scale(1.15)"/>
+    <use href="#leaf" transform="translate(390 565) rotate(65) scale(1.3)"/>
+    <use href="#leaf" transform="translate(370 590) rotate(-35) scale(1.15)"/>
+    <use href="#leaf" transform="translate(410 570) rotate(35) scale(1.2)"/>
+    <use href="#leaf" transform="translate(320 545) rotate(-105) scale(.95)"/>
+    <use href="#leaf" transform="translate(430 540) rotate(95) scale(1.05)"/>
+    <use href="#leaf" transform="translate(250 520) rotate(-120) scale(.9)"/>
+    <use href="#leaf" transform="translate(490 525) rotate(115) scale(.95)"/>
+</g>
+
+</g>
+
+<g class="draw-reveal" style="--delay: 3.1s">
+
+<g class="leaves">
+    <use href="#leaf" transform="translate(170 430) rotate(-100) scale(.85)"/>
+    <use href="#leaf" transform="translate(570 425) rotate(100) scale(.9)"/>
+    <use href="#leaf" transform="translate(230 485) rotate(-65) scale(.8)"/>
+    <use href="#leaf" transform="translate(520 480) rotate(65) scale(.85)"/>
+</g>
+
+</g>
+
+<!-- =========================================
+     RAMO DE CUATRO LIRIOS
+========================================= -->
+
+<g class="draw-reveal" style="--delay: 3.6s">
+    <g class="flower" style="--flower-delay: -1s; --duration: 6.5s">
+        <use href="#lily" transform="translate(235 370) rotate(-22) scale(.68)"/>
+    </g>
+</g>
+
+<g class="draw-reveal" style="--delay: 3.9s">
+    <g class="flower" style="--flower-delay: -3s; --duration: 7.5s">
+        <use href="#lily" transform="translate(380 300) rotate(5) scale(.72)"/>
+    </g>
+</g>
+
+<g class="draw-reveal" style="--delay: 4.2s">
+    <g class="flower" style="--flower-delay: -2s; --duration: 6.8s">
+        <use href="#lily" transform="translate(525 370) rotate(22) scale(.68)"/>
+    </g>
+</g>
+
+<g class="draw-reveal" style="--delay: 4.5s">
+    <g class="flower" style="--flower-delay: -4s; --duration: 7.2s">
+        <use href="#lily" transform="translate(380 425) rotate(0) scale(.72)"/>
+    </g>
+</g>
+
+
+
+<!-- =========================================
+     TALLOS VISIBLES ANTES DEL AMARRE
+========================================= -->
+
+<g class="draw-reveal" style="--delay: 7.2s">
+
+<g fill="none" stroke-linecap="round">
+
+    <path d="M350 700 Q360 750 370 787"
+          stroke="url(#stemColor)" stroke-width="8"/>
+
+    <path d="M380 695 Q380 750 380 788"
+          stroke="url(#stemColor)" stroke-width="9"/>
+
+    <path d="M410 700 Q400 750 390 787"
+          stroke="url(#stemColor)" stroke-width="8"/>
+
+    <path d="M370 710 Q375 755 376 785"
+          stroke="#a2bd70" stroke-width="1.5" opacity=".6"/>
+
+</g>
+</g>
+
+<!-- =========================================
+     MOÑO DE TELA ROSA
+========================================= -->
+
+<g class="draw-reveal" style="--delay: 7.8s">
+
+<g class="ribbon" transform="translate(0 75)">
+
+    <ellipse cx="380" cy="718" rx="80" ry="20"
+             fill="#44202e" opacity=".4"/>
+
+    <path d="
+        M376 705
+        C335 671 285 681 294 715
+        C301 747 350 736 380 716
+        Q387 710 376 705Z"
+        fill="url(#ribbonColor)"
+        stroke="#f5b6c7"
+        stroke-width="2"/>
+
+    <path d="M306 699 Q340 695 369 711"
+          fill="none" stroke="#963b61" stroke-width="5" opacity=".6"/>
+
+    <path d="M303 706 Q332 684 357 701"
+          fill="none" stroke="#ffe7ed" stroke-width="3" opacity=".8"/>
+
+    <path d="
+        M384 705
+        C425 671 475 681 466 715
+        C459 747 410 736 380 716
+        Q373 710 384 705Z"
+        fill="url(#ribbonColor)"
+        stroke="#f5b6c7"
+        stroke-width="2"/>
+
+    <path d="M454 699 Q420 695 391 711"
+          fill="none" stroke="#873454" stroke-width="5" opacity=".6"/>
+
+    <path d="M457 706 Q428 684 403 701"
+          fill="none" stroke="#ffe7ed" stroke-width="3" opacity=".8"/>
+
+    <path d="
+        M366 714
+        Q343 755 316 817
+        L347 800
+        L378 727Z"
+        fill="url(#ribbonColor)"
+        stroke="#e9a0b5"
+        stroke-width="2"/>
+
+    <path d="
+        M394 714
+        Q417 755 444 817
+        L413 800
+        L382 727Z"
+        fill="url(#ribbonColor)"
+        stroke="#e9a0b5"
+        stroke-width="2"/>
+
+    <path d="M365 729 Q350 770 334 801"
+          fill="none" stroke="#ffe2e9" stroke-width="3" opacity=".65"/>
+
+    <path d="M395 729 Q410 770 426 801"
+          fill="none" stroke="#ffe2e9" stroke-width="3" opacity=".55"/>
+
+    <ellipse cx="380" cy="712" rx="17" ry="14"
+             fill="#a83d68"
+             stroke="#f7c4d0"
+             stroke-width="2"/>
+
+    <ellipse cx="376" cy="707" rx="6" ry="4"
+             fill="#ffe5eb" opacity=".75"/>
+
+    <path d="M371 713 Q380 720 389 713"
+          fill="none" stroke="#f8bdcd" stroke-width="1.5" opacity=".7"/>
+
+</g>
+</g>
+
+</g>
+
+</svg>
+
+</body>
+<!-- MÚSICA DE FONDO -->
+<audio id="backgroundMusic" loop>
+    <source src="MRF.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+    const music = document.getElementById("backgroundMusic");
+
+    // Iniciar música al interactuar con la página
+    document.addEventListener("click", function startMusic() {
+        music.play();
+        document.removeEventListener("click", startMusic);
+    }, { once: true });
+</script>
+</html>
