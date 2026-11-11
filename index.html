@@ -173,10 +173,35 @@ svg {
         stroke-dashoffset: 0;
     }
 }
+.gift-text {
+    position: absolute;
+    top: 7%;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #f3dfd2;
+    font-family: Georgia, serif;
+    font-size: clamp(18px, 3vw, 25px);
+    font-style: italic;
+    letter-spacing: 2px;
+    text-align: center;
+    white-space: nowrap;
+    opacity: 0;
+    animation: textAppear 2s ease forwards;
+    animation-delay: 1s;
+    text-shadow: 0 0 12px rgba(255, 220, 220, 0.35);
+}
+
+@keyframes textAppear {
+    to {
+        opacity: 1;
+    }
+}
+    
 </style>
 </head>
 
 <body>
+    <div class="gift-text">un pequeño detalle</div>
 
 <svg viewBox="0 0 760 850"
      xmlns="http://www.w3.org/2000/svg">
